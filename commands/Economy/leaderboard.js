@@ -25,7 +25,9 @@ class Leaderboard extends Command {
     async run (message, args, data) {
         
         let isOnlyOnMobile = (message.author.presence.clientStatus ? JSON.stringify(Object.keys(message.author.presence.clientStatus)) === JSON.stringify([ "mobile" ]) : false);
-
+        
+        if(isOnlyOnMobile) return message.channel.send(message.language.get("LEADERBOARD_WARN_PHONE"));
+        
         let type = args[0];
         if(!type || (type !== "credits" && type !== "level" && type !== "rep")){
             return message.channel.send(message.language.get("LEADERBOARD_ERR_TYPE"));
@@ -70,10 +72,6 @@ class Leaderboard extends Command {
             if(usersLeaderboard.length > 20) usersLeaderboard.length = 20;
             let newTable = await fetchUsers(usersLeaderboard, table, message.client);
             message.channel.send("```"+newTable.toString()+"```");
-        }
-
-        if(isOnlyOnMobile){
-            message.channel.send(message.language.get("LEADERBOARD_WARN_PHONE"));
         }
         
         async function fetchUsers(array, table, client) {
